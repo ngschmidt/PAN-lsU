@@ -1,0 +1,4 @@
+#!/bin/zsh
+for i in $(grep "<entry name=" $1 | cut -d '"' -f2); do
+	echo $i
+done
