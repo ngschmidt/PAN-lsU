@@ -1,4 +1,12 @@
 #!/bin/zsh
-for i in $(grep "<entry name=" $1 | cut -d '"' -f2); do
+
+get_names() {
+	echo $1
+	for i in $(grep "<entry name=" $1 | cut -d '"' -f2); do
+		echo $i
+	done
+}
+for i in $(get_names $1); do 
 	echo $i
+	grep -c $i $1
 done
