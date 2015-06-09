@@ -1,12 +1,43 @@
 #!/bin/zsh
 
-get_names() {
-	echo $1
-	for i in $(grep "<entry name=" $1 | cut -d '"' -f2); do
-		echo $i
-	done
+split_by_tag() {
+	if [[ -a $1 ]]; then
+		cat $1 | tr "\n" "|" | grep -o '<address>.*</address>' | sed 's/\(<address>\|<\/address>\)//g' | sed 's/|/\n/g'
+	else
+		echo "split_by_tag() could not find a file to parse. Please pass this script a file."
+	fi
 }
-for i in $(get_names $1); do 
-	echo $i
-	grep -c $i $1
-done
+
+filter_by_attribute() {
+	grep "name=" | cut -d '"' -f2 $1
+}
+
+get_names() {
+	if [[ -a $1 ]]; then
+		for i in $(split_by_tag $1 | filter_by_attribute ); do
+			echo $i
+		done
+	else
+		echo "get_names() could not find a file to parse. Please pass this script a file."
+	fi
+}
+
+get_names_ref_once() {
+	if [[ -a $1 ]]; then 
+		for i in $(get_names $1); do
+			if [ $(grep -c $i $1) -eq 1 ]; then
+				echo $i
+			fi
+		done
+	else 
+		echo "File not found!"
+	fi
+}
+
+
+if [[ -a $1 ]]; then
+	get_names_ref_once $1
+else
+	echo "This script was not passed a file. Please pass a file to this script to parse. Example:"
+	echo "pan_find_unused FIREWALL_CONFIG_FILE"
+fi
