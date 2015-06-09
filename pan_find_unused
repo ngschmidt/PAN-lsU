@@ -1,5 +1,14 @@
 #!/bin/zsh
 
+#################################################################################
+#			Palo Alto Unused Object Detection			#
+#			Nick Schmidt, GCI Integrated Solutions			#
+#################################################################################
+
+
+
+## First function, splits configuration based on a specific tag, currently hard-coded to "address"
+
 split_by_tag() {
 	if [[ -a $1 ]]; then
 		cat $1 | tr "\n" "|" | grep -o '<address>.*</address>' | sed 's/\(<address>\|<\/address>\)//g' | sed 's/|/\n/g'
@@ -8,9 +17,15 @@ split_by_tag() {
 	fi
 }
 
+
+## Filter single split output by entry name tag. This can be run by itself but it won't only handle a specific tag
+
 filter_by_attribute() {
 	grep "name=" | cut -d '"' -f2 $1
 }
+
+
+## Aggregate function. Loops through the output given by split_by_tag, then filter_by_attribute and prints it all
 
 get_names() {
 	if [[ -a $1 ]]; then
@@ -21,6 +36,9 @@ get_names() {
 		echo "get_names() could not find a file to parse. Please pass this script a file."
 	fi
 }
+
+
+## Aggregate function. Same as get_names, but only prints lines that only occur once in the given config file
 
 get_names_ref_once() {
 	if [[ -a $1 ]]; then 
@@ -35,6 +53,12 @@ get_names_ref_once() {
 }
 
 
+#################################################################################
+############################BEGIN MAIN FUNCTION##################################
+#################################################################################
+
+
+# if the script was passed a valid file, parse it
 if [[ -a $1 ]]; then
 	get_names_ref_once $1
 else
