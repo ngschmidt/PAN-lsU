@@ -62,6 +62,5 @@ get_names_ref_once() {
 if [[ -a $1 ]]; then
 	get_names_ref_once $1
 else
-	echo "This script was not passed a file. Please pass a file to this script to parse. Example:"
-	echo "pan_find_unused FIREWALL_CONFIG_FILE"
+	echo "This script was not passed a file."
 fi
